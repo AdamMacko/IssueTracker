@@ -1,0 +1,17 @@
+{
+  "jiraId": "PROJ-1",
+  "name": "Implementovať nový prihlasovací systém",
+  "tag": "Backend",
+  "tasks": [
+    {
+      "jiraId": "PROJ-2",
+      "name": "Vytvoriť databázovú tabuľku pre používateľov",
+      "tag": "Database"
+    },
+    {
+      "jiraId": "PROJ-3",
+      "name": "Napojiť login formulár z Leptosu na API",
+      "tag": "Frontend"
+    }
+  ]
+}

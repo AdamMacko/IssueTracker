@@ -1,0 +1,23 @@
+[
+  {
+    "epic": {
+      "jiraId": "PROJ-10",
+      "name": "Redizajn klientskej zóny",
+      "tag": "UX/UI",
+      "tasks": [
+        {
+          "jiraId": "PROJ-11",
+          "name": "Pripraviť nové CSS pre Dashboard",
+          "tag": "Frontend"
+        }
+      ]
+    }
+  },
+  {
+    "task": {
+      "jiraId": "PROJ-12",
+      "name": "Aktualizovať Leptos na verziu 0.6",
+      "tag": "Maintenance"
+    }
+  }
+]
