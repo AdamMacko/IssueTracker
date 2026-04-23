@@ -1,0 +1,136 @@
+.kanban-board {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 3rem 2rem 3rem;
+    overflow-x: auto;
+    align-items: flex-start;
+    height: calc(100vh - 120px);
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+.kanban-column {
+    flex: 0 0 320px;
+    background-color: #f1f5f9;
+    border-radius: $radius-md;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+
+    h3 {
+        font-size: 0.9rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0;
+    }
+
+    .task-count {
+        background: #e2e8f0;
+        color: $text-muted;
+        padding: 0.1rem 0.5rem;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+}
+
+.kanban-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    padding-bottom: 0.5rem;
+
+    &::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+}
+
+.task-card {
+    background: $bg-surface;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+    cursor: grab;
+    transition: all 0.2s ease;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        border-color: $primary-light;
+    }
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.task-title {
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+}
+
+.task-desc {
+    font-size: 0.85rem;
+    color: $text-muted;
+    margin: 0 0 1rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.75rem;
+}
+
+.task-id {
+    font-size: 0.75rem;
+    color: $text-muted;
+    font-weight: 500;
+}
+
+.task-assignee {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: $text-main;
+    font-weight: 500;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, $primary 0%, #a855f7 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+}

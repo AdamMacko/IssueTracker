@@ -1,0 +1,73 @@
+// styles/components/_buttons.scss
+
+.primary-button {
+    background-color: $primary;
+    color: white;
+    border: 1px solid transparent;
+    padding: 0 1.25rem;
+    border-radius: $radius-sm;
+    font-size: 0.9rem;
+    font-weight: 500;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+        background-color: $primary-hover;
+        box-shadow: $shadow-md;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        background-color: darken($primary-hover, 5%);
+    }
+}
+
+.secondary-button {
+    background-color: $bg-surface;
+    color: $text-main;
+    border: 1px solid $border-color;
+    padding: 0 1.25rem;
+    border-radius: $radius-sm;
+    font-size: 0.9rem;
+    font-weight: 500;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+        background-color: $bg-hover;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        background-color: #e2e8f0;
+    }
+}
+
+.text-button {
+    background: none;
+    border: none;
+    color: $primary;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    
+    &:hover {
+        color: $primary-hover;
+        text-decoration: underline;
+    }
+}

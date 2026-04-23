@@ -3,36 +3,38 @@ use leptos::prelude::*;
 #[component]
 pub fn RegisterPage() -> impl IntoView {
     view! {
-        <section class="register-page">
-            <section class="hero">
-                <h1>"Register"</h1>
-                <p>"Create a new account"</p>
-            </section>
-            
-            <form>
-                <div>
-                    <label for="name">"Name"</label>
-                    <input id="name" type="text" placeholder="Enter name" />
+        <div class="auth-layout">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="logo-icon-large"></div>
+                    <h1>"Create an account"</h1>
+                    <p>"Sign up to start managing your projects."</p>
                 </div>
 
-                <div>
-                    <label for="email">"Email"</label>
-                    <input id="email" type="email" placeholder="Enter email" />
-                </div>
+                <form class="auth-form" on:submit=|e| e.prevent_default()>
+                    <div class="input-group">
+                        <label for="name">"Full Name"</label>
+                        <input id="name" type="text" placeholder="John Doe" />
+                    </div>
 
-                <div>
-                    <label for="password">"Password"</label>
-                    <input id="password" type="password" placeholder="Enter password" />
-                </div>
+                    <div class="input-group">
+                        <label for="email">"Email"</label>
+                        <input id="email" type="email" placeholder="name@company.com" />
+                    </div>
 
-                <button type="submit">"Sign up"</button>
+                    <div class="input-group">
+                        <label for="password">"Password"</label>
+                        <input id="password" type="password" placeholder="••••••••" />
+                    </div>
 
-                
-                <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem;">
-                    <span style="color: #9aa4b2;">"Already have an account? "</span>
-                    <a href="/login" style="color: #4f8cff; font-weight: 600;">"Log in"</a>
-                </div>
-            </form>
-        </section>
+                    <button type="submit" class="primary-button auth-submit">"Sign up"</button>
+                </form>
+
+                <p class="auth-redirect">
+                    "Already have an account? "
+                    <a href="/login">"Log in"</a>
+                </p>
+            </div>
+        </div>
     }
 }

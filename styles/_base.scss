@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: $bg-body;
+    color: $text-main;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+    color: $text-main;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+a {
+    color: $primary;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: $primary-hover;
+    }
+}

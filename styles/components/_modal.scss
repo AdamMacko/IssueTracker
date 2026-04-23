@@ -1,0 +1,211 @@
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+    background-color: $bg-surface;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+
+    h2 {
+        font-size: 1.15rem;
+        margin: 0;
+        color: $text-main;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: $text-muted;
+        cursor: pointer;
+        padding: 0.25rem;
+        line-height: 1;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #ef4444;
+        }
+    }
+}
+
+.modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: $text-main;
+    }
+
+    input,
+    textarea {
+        padding: 0.6rem 0.75rem;
+        border: 1px solid $border-color;
+        border-radius: $radius-sm;
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: $text-main;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        resize: vertical;
+
+        &:focus {
+            outline: none;
+            border-color: $primary;
+            box-shadow: 0 0 0 3px $primary-light;
+        }
+    }
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+// Animations
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// User selection list
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    padding: 0.5rem;
+    background-color: #fafbfc;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+.user-select-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem;
+    border-radius: $radius-sm;
+    background-color: $bg-surface;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: $bg-hover;
+    }
+
+    &.selected {
+        background-color: $primary-light;
+        border-color: $primary;
+
+        .checkbox-circle {
+            background-color: $primary;
+            border-color: $primary;
+            color: white;
+        }
+    }
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, $text-muted 0%, #475569 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.user-select-item.selected .user-avatar {
+    background: linear-gradient(135deg, $primary 0%, #a855f7 100%);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .user-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $text-main;
+    }
+
+    .user-email {
+        font-size: 0.75rem;
+        color: $text-muted;
+    }
+}
+
+.checkbox-circle {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $border-color;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: transparent;
+    transition: all 0.2s ease;
+}

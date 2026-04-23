@@ -1,0 +1,97 @@
+.projects-section {
+    padding: 1rem 3rem;
+
+    h2 {
+        margin-bottom: 1.5rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+    }
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.project-card {
+    text-decoration: none;
+    color: inherit;
+    background: $bg-surface;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: 1.5rem;
+    box-shadow: $shadow-sm;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        box-shadow: $shadow-hover;
+        border-color: $primary-light;
+        transform: translateY(-2px);
+    }
+}
+
+.project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+
+    h3 {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+}
+
+.role-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    &.owner {
+        background-color: $primary-light;
+        color: $primary-hover;
+    }
+
+    &.shared {
+        background-color: #f1f5f9;
+        color: $text-muted;
+    }
+}
+
+.project-desc {
+    color: $text-muted;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, $primary 0%, #818cf8 100%);
+    border-radius: 999px;
+    transition: width 0.5s ease-out;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: $text-muted;
+    text-align: right;
+    font-weight: 500;
+}

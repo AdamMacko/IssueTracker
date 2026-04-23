@@ -1,0 +1,165 @@
+// styles/pages/_issue.scss
+
+.issues-section {
+    padding: 0 3rem 3rem 3rem;
+}
+
+.issue-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.issue-card {
+    background-color: $bg-surface;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    padding: 1.25rem;
+    box-shadow: $shadow-sm;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+}
+
+// Issue variants
+.epic-card {
+    border-left: 4px solid #a855f7;
+
+    &:hover {
+        border-color: #a855f7;
+    }
+}
+
+.task-card {
+    border-left: 4px solid $primary;
+
+    &:hover {
+        border-color: $primary;
+    }
+}
+
+.issue-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.issue-id {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: $text-muted;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+
+    &.epic-badge {
+        background-color: rgba(#a855f7, 0.1);
+        color: #9333ea;
+    }
+
+    &.task-badge {
+        background-color: rgba($primary, 0.1);
+        color: $primary-hover;
+    }
+}
+
+.issue-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-main;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.issue-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.tag-badge {
+    background-color: #f1f5f9;
+    color: $text-muted;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.task-count {
+    font-size: 0.75rem;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 500;
+
+    &::before {
+        content: "≣";
+        font-size: 0.9rem;
+        color: #94a3b8;
+    }
+}
+
+// Project tabs
+.project-tabs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    padding-bottom: 0.5rem;
+
+    &::-webkit-scrollbar {
+        height: 0;
+        background: transparent;
+    }
+}
+
+.project-tab {
+    background-color: $bg-surface;
+    border: 1px solid $border-color;
+    color: $text-muted;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+        background-color: $bg-hover;
+        color: $text-main;
+    }
+
+    &.active {
+        background-color: $primary;
+        color: white;
+        border-color: $primary;
+        box-shadow: $shadow-md;
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .issues-section {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+}

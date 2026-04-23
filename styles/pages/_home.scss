@@ -1,0 +1,210 @@
+// styles/pages/_home.scss
+
+.landing-page {
+    min-height: 100vh;
+    background-color: $bg-body;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle at top center, rgba($primary, 0.08) 0%, $bg-body 40%);
+}
+
+// Header
+.landing-header {
+    width: 100%;
+    max-width: 1200px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .brand {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: $text-main;
+        letter-spacing: -0.04em;
+        background: linear-gradient(135deg, $text-main 0%, $primary 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+.landing-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .nav-link {
+        color: $text-muted;
+        font-weight: 500;
+        font-size: 0.95rem;
+        
+        &:hover {
+            color: $primary;
+        }
+    }
+
+    .nav-button {
+        background-color: $bg-surface;
+        color: $text-main;
+        border: 1px solid $border-color;
+        padding: 0.5rem 1.25rem;
+        border-radius: $radius-sm;
+        font-weight: 600;
+        font-size: 0.95rem;
+        box-shadow: $shadow-sm;
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-color: $primary-light;
+            box-shadow: $shadow-md;
+            color: $primary-hover;
+        }
+    }
+}
+
+// Hero
+.hero {
+    text-align: center;
+    max-width: 800px;
+    padding: 6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .hero-badge {
+        background-color: rgba($primary, 0.1);
+        color: $primary-hover;
+        border: 1px solid rgba($primary, 0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        letter-spacing: 0.02em;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        line-height: 1.15;
+        margin-bottom: 1.5rem;
+        color: $text-main;
+        letter-spacing: -0.04em;
+    }
+
+    .hero-text {
+        font-size: 1.2rem;
+        color: $text-muted;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        max-width: 650px;
+    }
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+
+    .primary-button {
+        padding: 0.8rem 1.75rem;
+        font-size: 1.05rem;
+        height: auto;
+    }
+
+    .secondary-button {
+        background-color: $bg-surface;
+        color: $text-main;
+        border: 1px solid $border-color;
+        padding: 0.8rem 1.75rem;
+        border-radius: $radius-sm;
+        font-size: 1.05rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: $shadow-sm;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background-color: $bg-hover;
+            border-color: #cbd5e1;
+        }
+    }
+}
+
+// Features
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    padding: 2rem 2rem 6rem 2rem;
+
+    .feature-card {
+        background-color: $bg-surface;
+        border: 1px solid $border-color;
+        border-radius: $radius-lg;
+        padding: 2.5rem 2rem;
+        box-shadow: $shadow-sm;
+        transition: all 0.3s ease;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, $primary 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: $shadow-md;
+            border-color: transparent;
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: $text-main;
+        }
+
+        p {
+            color: $text-muted;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+}
