@@ -1,320 +1,386 @@
 # Issue Tracker
 
-Fullstack aplikácia na správu úloh a projektov vytvorená v **Ruste**, **Leptose** a **SQLite**.
+Fullstack aplikácia na správu projektov, úloh a tímovej spolupráce vytvorená v **Ruste** pomocou **Leptos**, **Axum**, **SQLx** a **SQLite**.
+
+Projekt slúži ako semestrálna ukážka fullstack vývoja v Ruste. Obsahuje registráciu a prihlásenie používateľov, správu projektov, Kanban tabuľu, komentáre, sledovanie času a jednoduchý analytický dashboard.
+
+---
 
 ## Funkcie
 
-### 🔐 Autentifikácia a Autorizácia
-- Registrácia nových používateľov s bcrypt hashovaním hesiel
-- Bezpečné prihlásenie s HTTP-only cookies
-- Chránené cesty a prevencia IDOR útokov
-- Rôlové prístupy (vlastník/člen)
+### 🔐 Autentifikácia a autorizácia
+- Registrácia používateľov
+- Prihlásenie pomocou bcrypt hashovania hesiel
+- Session-based autentifikácia cez náhodné `session_id`
+- `session_id` je uložené v HTTP-only cookie
+- Session sa overuje voči tabuľke `sessions` v databáze
+- Chránené stránky pomocou `ProtectedRoute`
+- Kontrola prístupu k projektom cez členstvo v `project_members`
 
-### 📋 Správa Projektov
-- Vytváranie a spravovanie projektov
-- Pozývanie členov tímu
-- Sledovanie štatistík projektov a analytiky tímu
-- Prehliadanie všetkých projektov alebo filtrovaných podľa príslušnosti
+### 📋 Správa projektov
+- Vytváranie projektov
+- Pozývanie členov tímu pri vytvorení projektu
+- Zobrazenie projektov, ktorých je používateľ členom
+- Prechod na Kanban board konkrétneho projektu
+- Zobrazenie členov projektu pri priraďovaní úloh
 
-### 🎯 Správa Úloh
-- Kanban tabuľa s funkciou drag-and-drop
-- Vytváranie, aktualizácia a priraďovanie úloh
-- Viacero možností stavu (Zrobí sa, V progrese, Na kontrole, Hotovo)
-- Modálne okno s úplnými informáciami o úlohe
+### 🎯 Správa úloh
+- Vytváranie úloh v projekte
+- Kanban tabuľa so stavmi `Todo`, `InProgress`, `InReview`, `Done`
+- Drag-and-drop presúvanie úloh medzi stĺpcami
+- Priraďovanie úloh členom projektu
+- Detail úlohy v modálnom okne
 
-### 💬 Spolupráca
-- Vnorené komentáre s funkciou odpovedania
-- Systém hlasov pre komentáre
-- Vlákna diskusií v reálnom čase
-- Podpora Markdownu
+### 💬 Komentáre
+- Komentáre k úlohám
+- Odpovede na komentáre cez `parent_id`
+- Vnorené diskusné vlákna
+- Upvote komentárov
+- Automatické opätovné načítanie diskusie po pridaní komentára alebo upvote
 
-### ⏱️ Sledovanie Času
-- Spustenie/zastavenie časovača pre úlohy
-- Ručné zaznamenávanie času
-- Prehliadanie histórie sledovania času
-- Dashboard analytiky tímu s distribúciou času
+### ⏱️ Sledovanie času
+- Spustenie a zastavenie časovača pri úlohe
+- Uloženie odpracovaného času do databázy
+- Zobrazenie histórie časových záznamov
+- Výpočet celkového času na úlohe
 
-### 📊 Analytika
-- Štatistiky výkonu tímu
-- Distribúcia času medzi členov tímu
-- Vizuálne stĺpcové grafy
-- Poznatky na úrovni projektu
+### 📊 Dashboard a analytika
+- Výber projektu
+- Celkový odpracovaný čas
+- Počet aktívnych členov
+- Priemerný čas na člena
+- Top contributor
+- Jednoduchý stĺpcový graf odpracovaného času podľa členov
 
-### 🔔 Používateľské Rozhranie
-- Systém upozornení (úspech/chyba/info)
-- Responzívny dizajn pre počítač a mobilný telefón
-- Čisté a moderné rozhranie
-- Hladké animácie a prechody
+### 🔔 Používateľské rozhranie
+- Toast notifikácie pre úspech, chybu a informácie
+- Responzívny sidebar
+- Modálne okná pre vytvorenie projektu, vytvorenie úlohy a detail úlohy
+- Jednoduchý moderný dizajn
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- **Leptos** - Fullstack Rust framework
-- **Leptos Router** - Klientske smerovania
-- **Leptos Meta** - Správa meta tagov
-- **CSS** - Vlastné štýly
+- **Leptos** – fullstack Rust framework
+- **Leptos Router** – routovanie stránok
+- **Leptos Meta** – meta tagy, titulok a štýly
+- **SCSS/CSS** – vlastné štýly
 
 ### Backend
-- **Leptos Server Functions** - Bezchybná komunikácia klient-server
-- **Axum** - Web framework
-- **SQLx** - Type-safe SQL dotazy
-- **SQLite** - Databáza
+- **Axum** – HTTP server
+- **Leptos Server Functions** – komunikácia medzi frontendom a serverom
+- **SQLx** – práca s databázou
+- **SQLite** – lokálna databáza
 
 ### Bezpečnosť
-- **Bcrypt** - Hešovanie hesiel
-- **HTTP-only Cookies** - Správa relácií
-- **IDOR Prevention** - Validácia prístupu k projektom
+- **bcrypt** – hashovanie hesiel
+- **HTTP-only cookies** – ochrana session cookie pred JavaScriptom
+- **Session tabuľka** – server overuje `session_id` voči databáze
+- **Parameterized SQL queries** – ochrana pred SQL injection
+- **Access control** – serverové kontroly členstva v projekte pri viacerých operáciách
 
 ---
 
-## Začíname
+## Požiadavky
 
-### Požiadavky
-- **Rust** (1.70+) s Cargo
-- **Node.js** (pre nástroje na zostavenie Leptos)
-- **SQLite** 3
+- Rust a Cargo
+- `cargo-leptos`
+- SQLite
 
-### Inštalácia
+Inštalácia `cargo-leptos`:
 
-1. **Klonovať repozitár**
-   ```bash
-   git clone <adresa-repozitára>
-   cd issue-tracker
-   ```
+```bash
+cargo install cargo-leptos
+```
 
-2. **Nainštalovať závislosti**
-   ```bash
-   cargo install cargo-leptos
-   ```
+---
 
-3. **Inicializovať databázu**
-   ```bash
-   # Vytvorenie SQLite databázy a spustenie migrácií
-   sqlite3 tracker.db < schema.sql
-   ```
+## Nastavenie prostredia
 
-4. **Naplniť testovacími dátami (voliteľné)**
-   ```bash
-   # Aplikácia automaticky naplní vzorové dáta pri prvom spustení
-   # Používatelia: adam@test.cc, laco@test.cc, jana@test.cc, peter@test.cc
-   # Heslo: heslo123
-   ```
+V koreňovom priečinku projektu vytvor súbor `.env`:
 
-### Spustenie Aplikácie
+```env
+DATABASE_URL=sqlite:issue_tracker.db?mode=rwc
+SEED_DB=1
+```
 
-**Vývojový režim:**
+Význam premenných:
+
+- `DATABASE_URL` určuje SQLite databázu, ktorú aplikácia používa.
+- `SEED_DB=1` zapne vloženie testovacích dát pri štarte aplikácie.
+
+Po prvom úspešnom naplnení databázy môžeš `SEED_DB=1` zo súboru `.env` odstrániť alebo zakomentovať, aby sa seed nespúšťal pri každom štarte.
+
+---
+
+## Spustenie aplikácie
+
+Vývojový režim:
+
 ```bash
 cargo leptos watch
 ```
 
-**Build na produkciu:**
+Aplikácia bude dostupná na:
+
+```text
+http://127.0.0.1:3000
+```
+
+Produkčný build:
+
 ```bash
 cargo leptos build --release
 ```
 
-Aplikácia bude dostupná na `http://localhost:3000`
-
 ---
 
-## Schéma Databázy
+## Databáza a migrácie
 
-### Používatelia
-- `id` - Primárny kľúč
-- `username` - Zobrazované meno používateľa
-- `email` - Jedinečný e-mail
-- `password_hash` - Bcrypt hešované heslo
+Aplikácia používa SQLx migrácie v priečinku:
 
-### Projekty
-- `id` - Primárny kľúč
-- `name` - Názov projektu
-- `project_key` - Krátky identifikátor (napr. ESHOP)
-- `description` - Popis projektu
-- `owner_id` - Vlastník projektu (user_id)
+```text
+migrations/
+```
 
-### Členovia Projektu
-- `project_id` - Cudzí kľúč na projekty
-- `user_id` - Cudzí kľúč na používateľov
-- `role` - 'owner' alebo 'member'
+Pri štarte servera sa automaticky spustí:
 
-### Úlohy
-- `id` - Primárny kľúč
-- `project_id` - Cudzí kľúč na projekty
-- `title` - Názov úlohy
-- `description` - Popis úlohy
-- `status` - Zrobí sa, V progrese, Na kontrole, Hotovo
-- `assignee_id` - Priradený používateľ (nullable)
+```rust
+sqlx::migrate!("./migrations")
+```
 
-### Komentáre
-- `id` - Primárny kľúč
-- `task_id` - Cudzí kľúč na úlohy
-- `user_id` - Cudzí kľúč na používateľov
-- `parent_id` - Pre vnorené odpovede (nullable)
-- `content` - Text komentára
-- `upvotes` - Počet hlasov
-- `created_at` - Časová značka
+To vytvorí potrebné tabuľky, napríklad:
 
-### Záznamy o Čase
-- `id` - Primárny kľúč
-- `task_id` - Cudzí kľúč na úlohy
-- `user_id` - Cudzí kľúč na používateľov
-- `duration_seconds` - Zaznamenávaný čas v sekundách
-- `created_at` - Časová značka
+- `users`
+- `projects`
+- `project_members`
+- `tasks`
+- `comments`
+- `time_entries`
+- `sessions`
 
----
+Používaná SQLite databáza podľa `.env`:
 
-## Funkcie Bezpečnosti
+```text
+issue_tracker.db
+```
 
-### Autentifikácia
-- Heslá sú hešované pomocou bcrypt s DEFAULT_COST
-- Relácie sú uložené v HTTP-only cookies (nie sú prístupné cez JavaScript)
-- Auto-logout po 24 hodinách
-- HTTPS sa odporúča pre produkciu
+Pri problémoch je možné overiť tabuľky cez Python:
 
-### Autorizácia
-- **Prevencia IDOR** - Všetok prístup k úlohám/komentárom je overený voči príslušnosti v projekte
-- **Kontrola Prístupu k Projektom** - Používatelia môžu prezerať/upravovať len projekty, v ktorých sú členmi
-- **Rôlové Prístupy** - Operácie len pre vlastníka (zmazanie projektu, odstránenie člena)
+```bash
+python3 - <<'PY'
+import sqlite3
 
-### Validácia Dát
-- SQL parameterované dotazy zabraňujú SQL injekcii
-- Type-safe serverové funkcie pomocou Leptos
-- Validácia vstupu na strane servera
+con = sqlite3.connect("issue_tracker.db")
+
+for row in con.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"):
+    print(row[0])
+PY
+```
 
 ---
 
 ## Testovacie účty
 
-Predvolení testovací používatelia v databáze:
+Seed vytvára tieto testovacie účty. Všetky majú rovnaké heslo:
 
-| E-mail | Heslo | Rola |
-|--------|-------|------|
-| adam@test.cc | heslo123 | Vlastník |
-| laco@test.cc | heslo123 | Člen |
-| jana@test.cc | heslo123 | Člen |
-| peter@test.cc | heslo123 | Člen |
+```text
+password123
+```
+
+| ID | Meno | E-mail | Heslo |
+|----|------|--------|-------|
+| 1 | Adam Smith | adam@test.cc | password123 |
+| 2 | Laco Logic | laco@test.cc | password123 |
+| 3 | Jana Code | jana@test.cc | password123 |
+| 4 | Peter Project | peter@test.cc | password123 |
+| 5 | Mia Design | mia@test.cc | password123 |
+| 6 | Tomas Tester | tomas@test.cc | password123 |
+| 7 | Eva Security | eva@test.cc | password123 |
+| 8 | Roman Rust | roman@test.cc | password123 |
+
+Odporúčaný účet na testovanie:
+
+```text
+adam@test.cc
+password123
+```
 
 ---
 
-## Prehľad API
+## Schéma databázy
+
+### `users`
+- `id`
+- `username`
+- `email`
+- `password_hash`
+- `created_at`
+
+### `projects`
+- `id`
+- `name`
+- `project_key`
+- `description`
+- `owner_id`
+- `created_at`
+
+### `project_members`
+- `project_id`
+- `user_id`
+- `role`
+- `joined_at`
+
+### `tasks`
+- `id`
+- `project_id`
+- `title`
+- `description`
+- `status`
+- `assignee_id`
+- `created_at`
+
+### `comments`
+- `id`
+- `task_id`
+- `user_id`
+- `parent_id`
+- `content`
+- `upvotes`
+- `created_at`
+
+### `time_entries`
+- `id`
+- `task_id`
+- `user_id`
+- `duration_seconds`
+- `created_at`
+
+### `sessions`
+- `id`
+- `user_id`
+- `expires_at`
+- `created_at`
+
+---
+
+## Prehľad serverových funkcií
 
 ### Autentifikácia
-- `register_user(username, email, password)` - Vytvorenie nového účtu
-- `login_user(email, password)` - Prihlásenie
-- `logout_user()` - Odhlásenie
-- `get_current_user()` - Získanie ID autentifikovaného používateľa
-- `get_user_profile()` - Získanie detailov používateľa
+- `register_user(username, email, password)`
+- `login_user(email, password)`
+- `logout_user()`
+- `get_current_user()`
+- `get_user_profile()`
+- `search_users(query)`
 
 ### Projekty
-- `get_projects()` - Zoznam projektov používateľa
-- `create_project(name, project_key, description, invited_users)` - Vytvorenie projektu
-- `get_project(id)` - Získanie detailov projektu
-- `get_project_members(id)` - Zoznam členov projektu
-- `get_project_stats(id)` - Získanie analytických dát
-- `get_my_projects()` - Projekty, ktorých je používateľ členom
+- `get_projects()`
+- `create_project(name, project_key, description, invited_users_str)`
+- `get_project(project_id)`
+- `get_project_members(project_id)`
+- `get_project_stats(project_id)`
+- `get_my_projects()`
 
 ### Úlohy
-- `get_tasks(project_id)` - Zoznam úloh v projekte
-- `create_task(project_id, title, description, status)` - Vytvorenie úlohy
-- `get_task(id)` - Získanie detailov úlohy
-- `update_task_status(id, status)` - Zmena stavu úlohy
-- `assign_task(id, assignee_id)` - Priraďovanie úlohy používateľovi
-- `get_my_issues()` - Úlohy priradené používateľovi
+- `get_tasks(project_id)`
+- `create_task(project_id, title, description, status)`
+- `get_task(task_id)`
+- `update_task_status(task_id, new_status)`
+- `assign_task(task_id, assignee_id)`
+- `get_my_issues()`
 
 ### Komentáre
-- `get_comments(task_id)` - Zoznam komentárov k úlohe
-- `add_comment(task_id, parent_id, content)` - Zverejnenie komentára
-- `upvote_comment(id)` - Hlasovanie pre komentár
+- `get_comments(task_id)`
+- `add_comment(task_id, parent_id, content)`
+- `upvote_comment(comment_id)`
 
-### Sledovanie Času
-- `get_time_entries(task_id)` - Zoznam záznamov o čase
-- `add_time_entry(task_id, duration_seconds)` - Zaznamenanie času
-
----
-
-## Kvalita Kódu
-
-### Najlepšie Praktiky
-- **Type Safety** - Využíva Rustov systém typov a type-safe serverové funkcie Leptos
-- **Spracovanie Chýb** - Správne typy `Result` s zmyslyplnými chybovými správami
-- **Minimálne Komentáre** - Kód je samo-dokumentujúci sa s jasnými názvami konvencií
-- **Konzistentný Štýl** - Dodržiava Rustove konvencie a najlepšie praktiky Leptos
-- **Oddelenie Záležitostí** - Jasné hranice medzi frontend, backend a vrstvou dát
-
-### Prehľad Súborov
-- **19 Rust modulov** - Všetky organizované podľa funkčnosti
-- **Bez externých API volaní** - Samostatná aplikácia
-- **Type-safe databázové dotazy** - Použitie SQLx compile-time overenia
-- **Fullstack Rust** - Type safety od databázy až po UI
-
----
-## Výkon a optimalizace (Performance Considerations)
-
-- **Lazy Loading (Odložené načítání)** - Komentáře a úlohy se načítavají dynamicky až na vyžiadanie.
-- **Cachování** - Zdroje jsou pre zrýchlenie cachované na strane klienta.
-- **Indexovanie databázy** - Databázové dopyty sú optimalizované pomocou správne nastavených indexov.
-- **Responzívne UI** - Plynulé CSS prechody a animácie pre lepší používateľský zážitok.
-- **Optimalizácia kódu** - Minimálna veľkosť výsledného bundlu vďaka architektúre frameworku Leptos.
+### Sledovanie času
+- `get_time_entries(task_id)`
+- `add_time_entry(task_id, duration_seconds)`
 
 ---
 
-## Budúce vylepšenia (Roadmapa)
+## Bezpečnostné riešenia
 
-- [ ] **Stránkovanie (Pagination)** - Efektívne spracovanie a zobrazovanie veľkých objemov dát.
-- [ ] **Pokročilé filtrovanie** - Filtrovanie úloh podľa stavu, priradenej osoby a dátumu.
-- [ ] **Vyhľadávanie** - Full-textové vyhľadávanie naprieč projektmi a úlohami.
-- [ ] **Notifikácie** - E-mailové upozornenia a notifikácie priamo v aplikácii.
-- [ ] **Označovanie používateľov** - Možnosť spomenúť kolegu cez @pouzivatel v komentároch.
-- [ ] **Prílohy** - Nahrávanie súborov priamo k úlohám alebo komentárom.
-- [ ] **Tmavý režim (Dark Mode)** - Prepínač vizuálnych tém.
-- [ ] **Záznam aktivity** - Chronologický log zmien a aktivít v projekte.
-- [ ] **API Dokumentácia** - Špecifikácia endpointov pomocou OpenAPI/Swagger.
-- [ ] **Integračné testy** - Komplexná sada automatizovaných testov pre overenie stability.
+### Hashovanie hesiel
+Heslá sa neukladajú v čistom texte. Pri registrácii sa heslo zahashuje pomocou bcrypt a do databázy sa uloží iba `password_hash`.
 
----
+### Session-based login
+Po úspešnom prihlásení server vygeneruje náhodné `session_id`. Do cookie sa uloží iba toto `session_id`, nie `user_id`.
 
-## Riešenie problémov (Troubleshooting)
+Server potom pri každej chránenej operácii vyhľadá session v tabuľke `sessions` a zistí, ktorému používateľovi patrí.
 
-### Chyba pripojenia k databáze
-- Uisti sa, že máš nainštalované SQLite: `sqlite3 --version`
-- Skontroluj, či existuje súbor s databázou: `ls -la tracker.db`
-- Over prístupové práva k databázovému súboru: `chmod 644 tracker.db`
+### Ochrana pred jednoduchou zmenou identity
+Používateľ si síce vie lokálne prepísať cookie, ale ak si vymyslí neexistujúce `session_id`, server ho v databáze nenájde a používateľ nebude autentifikovaný.
 
-### Port sa už používa
-- Predvolený port je 3000. Zmeniť ho môžeš takto: `LEPTOS_ADDR=127.0.0.1:3001 cargo leptos watch`
-
-### Chyba pri kompilácii (Build fails)
-- Aktualizuj Rust na najnovšiu verziu: `rustup update`
-- Vymaž cache a spusti build znova: `cargo clean && cargo leptos build`
+### Kontrola prístupu
+Pri práci s projektmi a úlohami sa na serveri overuje, či je používateľ členom príslušného projektu.
 
 ---
 
-## Prispievanie do projektu (Contributing)
+## Známe obmedzenia
 
-Príspevky do kódu sú vítané! Postupuj prosím nasledovne:
-1. Urob Fork tohto repozitára.
-2. Vytvor si novú vetvu pre svoju funkciu (`git checkout -b feature/uzasna-funkcia`).
-3. Urob commit svojich zmien (`git commit -m 'Pridanie úžasnej funkcie'`).
-4. Pushni zmeny do svojej vetvy (`git push origin feature/uzasna-funkcia`).
-5. Otvor Pull Request.
+Projekt je školská/semestrálna aplikácia, preto niektoré časti nie sú riešené produkčne:
+
+- Upvote komentárov zatiaľ nekontroluje, či jeden používateľ hlasoval iba raz.
+- Ukladanie popisu úlohy v detail modale je pripravené v UI, ale vyžaduje doplnenie serverovej funkcie.
+- Status úlohy je uložený ako textový `String`; v produkcii by bolo vhodnejšie použiť enum alebo serverovú validáciu.
+- Niektoré prístupové kontroly je možné ďalej sprísniť, napríklad pri detaile úlohy a priraďovaní úlohy.
+- Aplikácia je určená hlavne na lokálne spustenie a prezentáciu.
 
 ---
 
-## Licencia
+## Roadmapa
 
-Tento projekt je licencovaný pod licenciou MIT – pre viac detailov si pozri súbor LICENSE.
+- [ ] Validácia statusu úlohy na serveri
+- [ ] Kontrola jedného upvotu na používateľa
+- [ ] Reálne ukladanie popisu úlohy
+- [ ] Rozšírené filtrovanie úloh
+- [ ] Vyhľadávanie v projektoch a úlohách
+- [ ] Notifikácie
+- [ ] Prílohy k úlohám
+- [ ] Audit log zmien
+- [ ] Testy serverových funkcií
+
+---
+
+## Riešenie problémov
+
+### `no such table: sessions`
+Skontroluj, či prebehli migrácie a či existuje tabuľka `sessions`.
+
+```bash
+python3 - <<'PY'
+import sqlite3
+con = sqlite3.connect("issue_tracker.db")
+print(con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='sessions'").fetchall())
+PY
+```
+
+Ak tabuľka neexistuje, skontroluj priečinok `migrations/`, reštartuj server a podľa potreby použi:
+
+```bash
+cargo clean
+cargo leptos watch
+```
+
+### Problém s cookies
+Po zmene autentifikácie je vhodné vymazať staré cookies v prehliadači a prihlásiť sa znova.
+
+### Port 3000 sa už používa
+Ukonči existujúci proces alebo zmeň port v konfigurácii Leptos.
 
 ---
 
 ## Autor
 
-Vytvorené ako semestrálny projekt demonštrujúci full-stack vývoj webových aplikácií v jazyku Rust s využitím moderných *best practices*, dizajnu zameraného na bezpečnosť a čistej architektúry.
+Vytvorené ako semestrálny projekt demonštrujúci fullstack vývoj webovej aplikácie v jazyku Rust.
 
 ---
 
-## Podpora
+## Licencia
 
-V prípade problémov, otázok alebo návrhov na zlepšenie prosím vytvor nové "Issue" v tomto repozitári.
-
-**Príjemné trackovanie úloh! 🚀**
+Projekt je určený na študijné účely.
