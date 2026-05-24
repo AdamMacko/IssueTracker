@@ -1,87 +1,155 @@
+// Tento main sa skompiluje iba vtedy, keď je zapnutý feature "ssr".
+// SSR znamená Server Side Rendering, čiže aplikácia beží aj na serveri.
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
-    use axum::Router;
-    use leptos::logging::log;
-    use leptos::prelude::*;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
-    use issue_tracker::app::*;
-    use sqlx::sqlite::SqlitePoolOptions;
-    use crate::ax_state::AppState;
+    // Importujeme vlastný AppState, kde máme uložené globálne veci aplikácie.
+    use ax_state::AppState;
 
-    // 1. Načítanie konfigurácie z .env súboru
+    // Axum používame ako webový server.
+    // Router definuje routy a Extension slúži na pridanie zdieľaných dát, napríklad databázy.
+    use axum::{Router, Extension};
+
+    // Importujeme App a shell z našej Leptos aplikácie.
+    use issue_tracker::app::*;
+
+    // log používame na jednoduché vypisovanie správ do konzoly.
+    use leptos::logging::log;
+
+    // Importujeme základné veci z Leptosu, napríklad konfiguráciu a provide_context.
+    use leptos::prelude::*;
+
+    // Funkcie z leptos_axum, ktoré prepájajú Leptos s Axum serverom.
+    use leptos_axum::{generate_route_list, LeptosRoutes};
+
+    // SqlitePoolOptions používame na vytvorenie poolu pripojení k SQLite databáze.
+    use sqlx::sqlite::SqlitePoolOptions;
+
+    // Funkcia na vloženie testovacích dát do databázy.
+    use issue_tracker::server::seed::seed_database;
+
+    // Načítame premenné z .env súboru.
+    // Napríklad DATABASE_URL alebo SEED_DB.
     let _ = dotenvy::dotenv();
 
+    // Načítame konfiguráciu Leptos aplikácie.
+    // unwrap() znamená, že ak konfigurácia zlyhá, aplikácia spadne.
     let conf = get_configuration(None).unwrap();
+
+    // Adresa, na ktorej bude server počúvať.
     let addr = conf.leptos_options.site_addr;
+
+    // Leptos options si uložíme bokom, lebo ich budeme používať aj v state.
     let leptos_options = conf.leptos_options;
+
+    // Vygenerujeme zoznam rout z App komponentu.
+    // Leptos/Axum podľa toho vie, aké stránky aplikácia obsahuje.
     let routes = generate_route_list(App);
 
-    // 2. Pripojenie k SQLite databáze
+    // Z .env načítame DATABASE_URL.
+    // Ak tam nie je, aplikácia skončí s chybou.
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env");
-    
+
+    // Vytvoríme connection pool k SQLite databáze.
+    // Pool znamená, že aplikácia môže zdieľať viac databázových pripojení.
     let pool = SqlitePoolOptions::new()
+        // Nastavíme maximálne 5 pripojení naraz.
         .max_connections(5)
+        // Pripojíme sa na databázu podľa DATABASE_URL.
         .connect(&db_url)
         .await
         .expect("Could not connect to SQLite database");
 
-    // 3. Automatické vytvorenie tabuľky (ak ešte neexistuje)
-    // Toto spustíme hneď po pripojení, aby sme mali istotu, že máme kam ukladať
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT NOT NULL
-        );
-        "#
-    )
-    .execute(&pool)
-    .await
-    .expect("Failed to initialize database tables");
+    // Spustíme databázové migrácie.
+    // Migrácie vytvoria alebo upravia tabuľky podľa súborov v priečinku migrations.
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Failed to run database migrations");
 
-    log!("Database is initialized and 'projects' table is ready.");
+    // Ak je v .env nastavená premenná SEED_DB,
+    // vložíme do databázy testovacie dáta.
+    if std::env::var("SEED_DB").is_ok() {
+        log!("Seeding database with test data...");
+        seed_database(&pool).await.expect("Failed to seed database");
+    }
 
-    // 4. Vytvorenie stavu aplikácie (AppState)
+    // Vypíšeme do konzoly, že databáza je pripravená.
+    log!("Database is initialized and migrations are done.");
+
+    // Vytvoríme globálny stav aplikácie.
+    // Bude obsahovať Leptos nastavenia a databázový pool.
     let state = AppState {
         leptos_options: leptos_options.clone(),
-        pool,
+        pool: pool.clone(),
     };
 
-    // 5. Nastavenie Routera
+    // Vytvoríme Axum router, čiže hlavný server aplikácie.
     let app = Router::new()
+        // Tu napájame Leptos routy na Axum.
         .leptos_routes(&state, routes, {
+            // State si naklonujeme, aby sa dal použiť v closure.
             let state = state.clone();
-            move || shell(state.leptos_options.clone())
+
+            move || {
+                // Databázový pool dáme do Leptos contextu.
+                // Vďaka tomu ho môžu serverové funkcie alebo komponenty získať cez context.
+                provide_context(state.pool.clone());
+
+                // Vrátime HTML shell aplikácie.
+                shell(state.leptos_options.clone())
+            }
         })
+        // Fallback rieši statické súbory a chybové stránky.
+        // Napríklad CSS, JS alebo 404.
         .fallback(leptos_axum::file_and_error_handler::<AppState, _>(shell))
+        // Pridáme databázový pool ako Axum Extension.
+        // Serverové funkcie si ho potom vedia vytiahnuť cez extract.
+        .layer(Extension(pool.clone()))
+        // Pridáme AppState do routera.
         .with_state(state);
 
-    // 6. Spustenie servera
+    // Vypíšeme adresu, na ktorej server beží.
     log!("listening on http://{}", &addr);
+
+    // Vytvoríme TCP listener na danej adrese.
+    // Ten čaká na HTTP požiadavky od používateľov.
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+
+    // Spustíme Axum server.
+    // app.into_make_service() premení router na službu, ktorú vie Axum obsluhovať.
     axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
 }
 
-// Pomocný modul pre zdieľaný stav (State management)
+// Tento modul existuje iba pri SSR.
+// Obsahuje AppState, teda spoločný stav aplikácie na serveri.
 #[cfg(feature = "ssr")]
 mod ax_state {
+    // FromRef umožňuje Axumu vytiahnuť konkrétne časti zo state.
     use axum::extract::FromRef;
+
+    // LeptosOptions obsahuje nastavenia Leptos aplikácie.
     use leptos::prelude::LeptosOptions;
+
+    // SqlitePool je pool pripojení k SQLite databáze.
     use sqlx::SqlitePool;
 
+    // AppState drží globálne veci, ktoré server potrebuje.
+    // Clone je potrebné, lebo state sa používa na viacerých miestach.
+    // Debug umožňuje jednoduchšie vypisovanie pri debugovaní.
     #[derive(FromRef, Clone, Debug)]
     pub struct AppState {
+        // Nastavenia Leptos aplikácie.
         pub leptos_options: LeptosOptions,
+
+        // Databázový pool, cez ktorý server komunikuje s databázou.
         pub pool: SqlitePool,
     }
 }
 
+// Keď aplikácia nebeží so SSR feature, použije sa tento prázdny main.
+// Je to potrebné, aby sa frontendová časť vedela skompilovať aj bez serverového mainu.
 #[cfg(not(feature = "ssr"))]
-pub fn main() {
-    // Na strane klienta (WASM) nepotrebujeme main, 
-    // hydratácia prebieha cez lib.rs
-}
+pub fn main() {}

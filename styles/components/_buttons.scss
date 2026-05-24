@@ -1,73 +1,171 @@
 // styles/components/_buttons.scss
 
-.primary-button {
-    background-color: $primary;
-    color: white;
-    border: 1px solid transparent;
-    padding: 0 1.25rem;
-    border-radius: $radius-sm;
-    font-size: 0.9rem;
-    font-weight: 500;
-    height: 40px;
+// ============================================
+// SHARED BASE
+// ============================================
+
+%button-base {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.4rem;
+    height: 36px;
+    padding: 0 1.1rem;
+    border-radius: $radius-sm;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: $shadow-sm;
+    white-space: nowrap;
+    user-select: none;
+    text-decoration: none;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease,
+        color 0.15s ease;
+
+    &:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        pointer-events: none;
+    }
+}
+
+// ============================================
+// PRIMARY BUTTON
+// ============================================
+
+.primary-button {
+    @extend %button-base;
+    background-color: $primary;
+    color: #ffffff;
+    border: 1px solid transparent;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
     &:hover {
         background-color: $primary-hover;
-        box-shadow: $shadow-md;
+        box-shadow:
+            0 3px 8px rgba($primary, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.12);
         transform: translateY(-1px);
     }
 
     &:active {
+        background-color: darken($primary-hover, 4%);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         transform: translateY(0);
-        background-color: darken($primary-hover, 5%);
     }
 }
 
+// ============================================
+// SECONDARY BUTTON
+// ============================================
+
 .secondary-button {
+    @extend %button-base;
     background-color: $bg-surface;
     color: $text-main;
     border: 1px solid $border-color;
-    padding: 0 1.25rem;
-    border-radius: $radius-sm;
-    font-size: 0.9rem;
-    font-weight: 500;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: $shadow-sm;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
     &:hover {
         background-color: $bg-hover;
-        border-color: #cbd5e1;
+        border-color: #b0bccc;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         transform: translateY(-1px);
     }
 
     &:active {
+        background-color: #e8ecf1;
+        border-color: #94a3b8;
+        box-shadow: none;
         transform: translateY(0);
-        background-color: #e2e8f0;
     }
 }
 
+// ============================================
+// TEXT BUTTON
+// ============================================
+
 .text-button {
+    @extend %button-base;
     background: none;
     border: none;
     color: $primary;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease;
-    
+    padding: 0 0.25rem;
+    height: auto;
+    box-shadow: none;
+
     &:hover {
         color: $primary-hover;
-        text-decoration: underline;
+        background-color: rgba($primary, 0.06);
+        border-radius: 4px;
+    }
+
+    &:active {
+        background-color: rgba($primary, 0.12);
+    }
+
+    &:focus-visible {
+        border-radius: 4px;
+    }
+}
+
+// ============================================
+// DANGER BUTTON (BONUS)
+// ============================================
+
+.danger-button {
+    @extend %button-base;
+    background-color: #ffffff;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        background-color: #fef2f2;
+        border-color: #ef4444;
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        background-color: #fee2e2;
+        box-shadow: none;
+        transform: translateY(0);
+    }
+}
+
+// ============================================
+// ICON BUTTON (BONUS)
+// ============================================
+
+.icon-button {
+    @extend %button-base;
+    background: none;
+    border: 1px solid transparent;
+    color: $text-muted;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    box-shadow: none;
+
+    &:hover {
+        background-color: $bg-hover;
+        border-color: $border-color;
+        color: $text-main;
+    }
+
+    &:active {
+        background-color: #e2e8f0;
     }
 }

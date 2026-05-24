@@ -270,3 +270,42 @@
     from { transform: translateX(100%); }
     to { transform: translateX(0); }
 }
+
+// Do tvojho .card-footer bloku pridaj toto:
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.75rem;
+
+    .assignee-select {
+        background-color: #f8fafc; // Svetlošedá, aby ladila s kartou
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: $text-muted;
+        padding: 0.2rem 0.4rem;
+        cursor: pointer;
+        max-width: 120px;
+        transition: all 0.2s ease;
+        outline: none;
+
+        &:hover {
+            border-color: $primary-light;
+            background-color: #fff;
+            color: $text-main;
+        }
+
+        &:focus {
+            border-color: $primary;
+            box-shadow: 0 0 0 2px rgba($primary, 0.1);
+        }
+
+        // Štýl pre možnosti vo vnútri (v niektorých prehliadačoch obmedzené)
+        option {
+            background: #fff;
+            color: $text-main;
+        }
+    }
+}

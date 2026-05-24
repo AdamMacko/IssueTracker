@@ -1,5 +1,18 @@
 // styles/components/_comments.scss
 
+// ============================================
+// VARIABLES & CONFIGURATION
+// ============================================
+
+$comment-spacing: 1rem;
+$avatar-size: 28px;
+$thread-line-width: 2px;
+$animation-speed: 0.2s;
+
+// ============================================
+// DISCUSSION SECTION
+// ============================================
+
 .discussion-section {
     margin-top: 2rem;
     padding-top: 2rem;
@@ -8,13 +21,19 @@
 
 .discussion-title {
     font-size: 1.1rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
+    color: $text-main;
+    letter-spacing: -0.01em;
 }
 
-// New comment
+// ============================================
+// NEW COMMENT INPUT
+// ============================================
+
 .new-comment-box {
     display: flex;
-    gap: 1rem;
+    gap: $comment-spacing;
     margin-bottom: 2rem;
 }
 
@@ -24,36 +43,69 @@
     border-radius: $radius-md;
     background: $bg-surface;
     overflow: hidden;
+    transition: border-color $animation-speed ease, box-shadow $animation-speed ease;
+
+    &:focus-within {
+        border-color: $primary;
+        box-shadow: 0 0 0 2px rgba($primary, 0.1);
+    }
 
     textarea {
         width: 100%;
         border: none;
-        padding: 1rem;
+        padding: $comment-spacing;
         min-height: 80px;
         resize: vertical;
         font-family: inherit;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: $text-main;
         background: transparent;
+        transition: background-color $animation-speed ease;
+
+        &::placeholder {
+            color: $text-muted;
+        }
 
         &:focus {
             outline: none;
+            background-color: rgba(255, 255, 255, 0.5);
         }
     }
 
     .new-comment-actions {
         display: flex;
         justify-content: flex-end;
-        padding: 0.5rem 1rem;
-        background-color: #fafbfc;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem $comment-spacing;
+        background: linear-gradient(180deg, #fafbfc 0%, #f8f9fa 100%);
         border-top: 1px solid #f1f5f9;
+
+        button {
+            padding: 0.5rem 1rem;
+            border-radius: $radius-sm;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all $animation-speed ease;
+            cursor: pointer;
+
+            &:hover {
+                transform: translateY(-1px);
+            }
+        }
     }
 }
 
-// Comment thread
+// ============================================
+// COMMENT THREAD
+// ============================================
+
 .comment-thread {
     display: flex;
     flex-direction: column;
     margin-top: 1rem;
+    animation: slideIn 0.3s ease-out;
 }
 
 .comment-main {
@@ -61,17 +113,21 @@
     gap: 0.75rem;
 }
 
+// ============================================
+// COMMENT LEFT SECTION (AVATAR & LINE)
+// ============================================
+
 .comment-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 28px;
+    width: $avatar-size;
     flex-shrink: 0;
 }
 
 .comment-avatar {
-    width: 28px;
-    height: 28px;
+    width: $avatar-size;
+    height: $avatar-size;
     background: linear-gradient(135deg, $text-muted 0%, #475569 100%);
     color: white;
     border-radius: 50%;
@@ -79,57 +135,89 @@
     align-items: center;
     justify-content: center;
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: 700;
     z-index: 2;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform $animation-speed ease, box-shadow $animation-speed ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
 }
 
 .thread-line {
     flex: 1;
-    width: 2px;
+    width: $thread-line-width;
     background-color: #e2e8f0;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-    transition: background-color 0.2s ease;
-    
+    margin-top: 0.375rem;
+    margin-bottom: 0.375rem;
+    transition: background-color $animation-speed ease;
+
     &:hover {
         background-color: $primary;
         cursor: pointer;
     }
 }
 
+// ============================================
+// COMMENT BODY
+// ============================================
+
 .comment-body {
     flex: 1;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
 }
 
 .comment-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.375rem;
+    flex-wrap: wrap;
 }
 
 .comment-author {
     font-size: 0.85rem;
     font-weight: 600;
     color: $text-main;
+    letter-spacing: -0.01em;
 }
 
 .comment-time {
     font-size: 0.75rem;
     color: $text-muted;
+    font-weight: 500;
 }
 
 .comment-content {
     font-size: 0.95rem;
-    color: #1e293b;
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
+    color: $text-main;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+    word-break: break-word;
+
+    a {
+        color: $primary;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color $animation-speed ease;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
+
+// ============================================
+// COMMENT ACTIONS
+// ============================================
 
 .comment-actions {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
 }
 
 .action-btn {
@@ -139,21 +227,66 @@
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    padding: 0;
-    display: flex;
+    padding: 0.375rem 0;
+    display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.375rem;
+    transition: all $animation-speed ease;
+    user-select: none;
 
     &:hover {
         color: $text-main;
+        transform: translateX(2px);
     }
 
-    &.reply-btn:hover {
-        color: $primary;
+    &.reply-btn {
+        &:hover {
+            color: $primary;
+        }
+    }
+
+    &:active {
+        transform: scale(0.98);
     }
 }
 
-// Nested replies
+// ============================================
+// NESTED REPLIES
+// ============================================
+
 .comment-replies {
-    margin-left: 36px;
+    margin-left: calc($avatar-size + 0.75rem);
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 768px) {
+    .new-comment-box {
+        flex-direction: column;
+    }
+
+    .comment-replies {
+        margin-left: calc($avatar-size + 0.5rem);
+    }
+
+    .comment-actions {
+        gap: 1rem;
+    }
 }

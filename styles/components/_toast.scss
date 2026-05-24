@@ -1,0 +1,74 @@
+// Kontajner pre všetky hlášky (Pravý dolný roh)
+.toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 9999; // Musí byť nad všetkým (aj nad modalmi)
+    pointer-events: none; // Aby neblokoval klikanie na veci pod ním, ak je prázdny
+}
+
+// Samotná hláška
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 250px;
+    max-width: 350px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    
+    // Border podľa typu pre lepší dizajn
+    border-left: 4px solid transparent;
+
+    &.toast-error {
+        border-left-color: #ef4444; // Červená
+        .toast-icon { background-color: #fee2e2; color: #ef4444; }
+    }
+
+    &.toast-success {
+        border-left-color: #22c55e; // Zelená
+        .toast-icon { background-color: #dcfce7; color: #16a34a; }
+    }
+
+    &.toast-info {
+        border-left-color: #3b82f6; // Modrá
+        .toast-icon { background-color: #dbeafe; color: #2563eb; }
+    }
+}
+
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    font-size: 0.9rem;
+    color: #334155;
+    line-height: 1.4;
+}
+
+// Animácia na vyplávanie
+@keyframes toastSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(100%) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}

@@ -2,3 +2,8 @@ pub mod sidebar;
 pub mod new_project_modal;
 pub mod comments;
 pub mod time_tracker;
+pub mod protected_route;
+pub use protected_route::*;
+pub mod new_task_modal;
+pub mod task_detail_modal;
+pub mod toast;

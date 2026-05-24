@@ -19,9 +19,13 @@ pub fn HomePage() -> impl IntoView {
             </header>
 
             <section class="hero">
-                <p class="hero-badge">"Project management for modern teams"</p>
+                <p class="hero-badge">
+                    "Project management for modern teams"
+                </p>
 
-                <h1>"Manage projects, tasks, and teamwork in one place"</h1>
+                <h1>
+                    "Manage projects, tasks, and teamwork in one place"
+                </h1>
 
                 <p class="hero-text">
                     "Issue Tracker helps you organize work, track progress, collaborate with teammates, "
@@ -40,18 +44,24 @@ pub fn HomePage() -> impl IntoView {
 
             <section class="features">
                 <div class="feature-card">
-                    <h2>"Project organization"</h2>
-                    <p>"Keep projects, milestones, and tasks structured in one shared workspace."</p>
+                    <h2>"Project Organization"</h2>
+                    <p>
+                        "Keep projects, milestones, and tasks structured in one shared workspace."
+                    </p>
                 </div>
 
                 <div class="feature-card">
-                    <h2>"Team collaboration"</h2>
-                    <p>"Invite colleagues, assign work, comment on issues, and stay aligned."</p>
+                    <h2>"Team Collaboration"</h2>
+                    <p>
+                        "Invite colleagues, assign work, comment on issues, and stay aligned."
+                    </p>
                 </div>
 
                 <div class="feature-card">
-                    <h2>"Progress tracking"</h2>
-                    <p>"Track task status, time spent, and project progress from start to finish."</p>
+                    <h2>"Progress Tracking"</h2>
+                    <p>
+                        "Track task status, time spent, and project progress from start to finish."
+                    </p>
                 </div>
             </section>
         </div>

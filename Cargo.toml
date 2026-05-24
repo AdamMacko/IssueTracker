@@ -12,6 +12,14 @@ leptos_router = { version = "0.8.0" }
 leptos_meta = { version = "0.8.0" }
 console_error_panic_hook = { version = "0.1", optional = true }
 wasm-bindgen = { version = "0.2.106", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+
+# Povie WASMu, aby použil JS funkcie pre náhodu
+getrandom = { version = "0.2", features = ["js"] }
+
+# bcrypt musí byť optional, aby sa nekompiloval do WASMu
+bcrypt = { version = "0.15", optional = true }
+uuid = { version = "1", features = ["v4"], optional = true }
 
 # Serverové knižnice (zapnuté len pre SSR)
 axum = { version = "0.8.0", features = ["macros"], optional = true }
@@ -22,6 +30,7 @@ dotenvy = { version = "0.15", optional = true }
 
 # Ostatné knižnice
 lucide-leptos = "0.1.0"
+gloo-timers = { version = "0.4.0", features = ["futures"] }
 
 [features]
 hydrate = [
@@ -35,9 +44,11 @@ ssr = [
     "dep:leptos_axum",
     "dep:sqlx",   
     "dep:dotenvy",   
+    "dep:bcrypt",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
+    "dep:uuid",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
