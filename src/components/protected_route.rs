@@ -15,7 +15,7 @@ use crate::server::auth::get_current_user;
 #[component]
 pub fn ProtectedRoute() -> impl IntoView {
     // Resource automaticky zavolá serverovú funkciu get_current_user.
-    // Táto funkcia pravdepodobne vráti Some(user_id), ak je používateľ prihlásený,
+    // Táto funkcia vráti Some(user_id), ak je používateľ prihlásený,
     // alebo None, ak prihlásený nie je.
     let auth_resource = Resource::new(|| (), |_| async move { get_current_user().await });
 
