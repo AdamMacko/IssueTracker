@@ -7,6 +7,7 @@ use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
 
 // Funkcia na zistenie aktuálne prihláseného používateľa.
+#[cfg(feature = "ssr")]
 use crate::server::auth::get_current_user;
 
 // Pomocná funkcia na kontrolu, či má používateľ prístup k projektu.
@@ -531,8 +532,8 @@ pub async fn get_my_issues() -> Result<Vec<TaskDto>, ServerFnError> {
     // Načítame tasky, kde assignee_id je aktuálny používateľ.
     let tasks = sqlx::query_as::<_, TaskDto>(
         r#"
-        SELECT id, project_id, title, description, status, assignee_id 
-        FROM tasks 
+        SELECT id, project_id, title, description, status, assignee_id
+        FROM tasks
         WHERE assignee_id = ?
         ORDER BY id DESC
         "#,

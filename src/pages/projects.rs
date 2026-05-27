@@ -140,7 +140,7 @@ pub fn ProjectsPage() -> impl IntoView {
 fn ProjectCard(project: Project) -> impl IntoView {
     // Progress je momentálne natvrdo 0.
     // Neskôr by sa sem mohol doplniť reálny výpočet dokončenia projektu.
-    let progress = 0;
+    let _progress = 0;
 
     // Role je momentálne natvrdo Owner.
     // Neskôr by sa mohla načítať skutočná rola používateľa v projekte.
@@ -164,7 +164,7 @@ fn ProjectCard(project: Project) -> impl IntoView {
             // Popis projektu.
             <p class="project-desc">{project.description.clone()}</p>
 
-            
+
         </A>
     }
 }
