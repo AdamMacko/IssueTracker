@@ -152,6 +152,7 @@ pub fn CommentItem(
             <div class="comment-replies">
                 // Tu vykresľujeme všetky odpovede na tento komentár.
                 // Každá odpoveď je znovu CommentItem, čiže komponent volá sám seba.
+                // Používame .into_any() na prerušenie rekurzívneho typu.
                 {comment.replies.into_iter().map(|reply| {
                     view! {
                         <CommentItem
@@ -159,7 +160,7 @@ pub fn CommentItem(
                             set_replying_to=set_replying_to
                             set_reload_trigger=set_reload_trigger
                         />
-                    }
+                    }.into_any()
                 }).collect_view()}
             </div>
         </div>

@@ -7,6 +7,7 @@ use leptos::prelude::*;
 use serde::{Deserialize, Serialize};
 
 // Funkcia na zistenie aktuálne prihláseného používateľa.
+#[cfg(feature = "ssr")]
 use crate::server::auth::get_current_user;
 
 // Struct reprezentuje jeden projekt.
@@ -40,16 +41,15 @@ pub async fn get_projects() -> Result<Vec<Project>, ServerFnError> {
 
     // Získame databázový pool z Axum extension.
     // Pool používame na vykonávanie SQL query.
-    let axum::Extension(pool) =
-        leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
-            .await
-            .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let axum::Extension(pool) = leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
+        .await
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
 
     // Načítame projekty, kde je používateľ buď owner,
     // alebo je členom projektu cez tabuľku project_members.
     let projects = sqlx::query_as::<_, Project>(
         r#"
-        SELECT DISTINCT p.id, p.name, p.project_key, p.description 
+        SELECT DISTINCT p.id, p.name, p.project_key, p.description
         FROM projects p
         LEFT JOIN project_members pm ON p.id = pm.project_id
         WHERE p.owner_id = ? OR pm.user_id = ?
@@ -183,16 +183,15 @@ pub async fn get_project_stats(project_id: i32) -> Result<Vec<TeamMemberStats>, 
         .ok_or_else(|| ServerFnError::new("Unauthorized access. You must be signed in."))?;
 
     // Získame databázový pool.
-    let axum::Extension(pool) =
-        leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
-            .await
-            .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let axum::Extension(pool) = leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
+        .await
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
 
     // Načítame štatistiky členov projektu.
     // Spočítame duration_seconds z time_entries a prevedieme ich na hodiny.
     let stats = sqlx::query_as::<_, DbStatRow>(
         r#"
-        SELECT 
+        SELECT
             u.username as name,
             COALESCE(SUM(te.duration_seconds) / 3600.0, 0.0) as hours
         FROM users u
@@ -201,7 +200,7 @@ pub async fn get_project_stats(project_id: i32) -> Result<Vec<TeamMemberStats>, 
         LEFT JOIN time_entries te ON te.task_id = t.id AND te.user_id = u.id
         WHERE pm.project_id = ?
           AND EXISTS (
-              SELECT 1 FROM project_members 
+              SELECT 1 FROM project_members
               WHERE project_id = ? AND user_id = ?
           )
         GROUP BY u.id
@@ -250,20 +249,19 @@ pub async fn get_project(project_id: i32) -> Result<Project, ServerFnError> {
         .ok_or_else(|| ServerFnError::new("Unauthorized access."))?;
 
     // Získame databázový pool.
-    let axum::Extension(pool) =
-        leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
-            .await
-            .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let axum::Extension(pool) = leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
+        .await
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
 
     // Načítame projekt iba vtedy, ak používateľ patrí medzi členov projektu.
     // EXISTS tu slúži ako kontrola oprávnenia.
     let project = sqlx::query_as::<_, Project>(
         r#"
-        SELECT id, name, project_key, description 
-        FROM projects 
-        WHERE id = ? 
+        SELECT id, name, project_key, description
+        FROM projects
+        WHERE id = ?
         AND EXISTS (
-            SELECT 1 FROM project_members 
+            SELECT 1 FROM project_members
             WHERE project_id = ? AND user_id = ?
         )
         "#,
@@ -279,7 +277,9 @@ pub async fn get_project(project_id: i32) -> Result<Project, ServerFnError> {
     // Inak vrátime chybu.
     match project {
         Some(p) => Ok(p),
-        None => Err(ServerFnError::new("Access denied or project does not exist.")),
+        None => Err(ServerFnError::new(
+            "Access denied or project does not exist.",
+        )),
     }
 }
 
@@ -301,10 +301,9 @@ pub async fn get_project_members(project_id: i64) -> Result<Vec<ProjectMemberDto
         .ok_or_else(|| ServerFnError::new("Unauthorized"))?;
 
     // Získame databázový pool.
-    let axum::Extension(pool) =
-        leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
-            .await
-            .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let axum::Extension(pool) = leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
+        .await
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
 
     // Najprv overíme, či je aktuálny používateľ členom projektu.
     // Ak nie je, nemal by vidieť zoznam členov.
@@ -325,7 +324,7 @@ pub async fn get_project_members(project_id: i64) -> Result<Vec<ProjectMemberDto
     // Načítame všetkých členov projektu.
     let members = sqlx::query_as::<_, ProjectMemberDto>(
         r#"
-        SELECT u.id, u.username 
+        SELECT u.id, u.username
         FROM users u
         JOIN project_members pm ON u.id = pm.user_id
         WHERE pm.project_id = ?
@@ -350,10 +349,9 @@ pub async fn get_my_projects() -> Result<Vec<ProjectMemberDto>, ServerFnError> {
         .ok_or_else(|| ServerFnError::new("Unauthorized"))?;
 
     // Získame databázový pool.
-    let axum::Extension(pool) =
-        leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
-            .await
-            .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let axum::Extension(pool) = leptos_axum::extract::<axum::Extension<sqlx::SqlitePool>>()
+        .await
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
 
     // Načítame projekty, kde je aktuálny používateľ členom.
     // Pozor: query vyberá p.name, ale ProjectMemberDto má field username.
@@ -361,7 +359,7 @@ pub async fn get_my_projects() -> Result<Vec<ProjectMemberDto>, ServerFnError> {
     // ale čistejšie by bolo použiť `p.name as username`.
     let projects = sqlx::query_as::<_, ProjectMemberDto>(
         r#"
-        SELECT p.id, p.name 
+        SELECT p.id, p.name
         FROM projects p
         JOIN project_members pm ON p.id = pm.project_id
         WHERE pm.user_id = ?
